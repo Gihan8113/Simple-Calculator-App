@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:simple_calculator/button_values.dart';
 
@@ -91,21 +93,68 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   void onBtnTap(String value) {
+    if (value == Btn.del) {
+      delete();
+      return;
+    }
+
+    if (value == Btn.clr) {
+      clearAll();
+      return;
+    }
+
+    appendValue(value);
+  }
+
+  //clears all output
+  
+
+  // delete one from the end
+  void delete() {
+    if (number2.isNotEmpty) {
+      // 12323 => 1232
+      number2 = number2.substring(0, number2.length - 1);
+    } else if (operand.isNotEmpty) {
+      operand = "";
+    } else if (number1.isNotEmpty) {
+      number1 = number1.substring(0, number1.length - 1);
+    }
+
+    setState(() {});
+  }
+
+  Void clearAll() {
+    setState(() {
+      number1 = "";
+      operand = "";
+      number2 = "";
+    });
+  }
+
+  // append value to the end
+  void appendValue(String value) {
+    // if is opernd and not "."
     if (value != Btn.dot && int.tryParse(value) == null) {
+      //operand pressed
       if (operand.isNotEmpty && number2.isNotEmpty) {
         // TODO calculate the equation before assigning new operand
       }
 
       operand = value;
-    } else if (number1.isEmpty || operand.isEmpty) {
-      //number1 ="1.2"
+    }
+    // assign value to number1 variable
+    else if (number1.isEmpty || operand.isEmpty) {
+      //check if value is "."
+      //ex:number1 ="1.2"
       if (value == Btn.dot && number1.contains(Btn.dot)) return;
       if (value == Btn.dot && number1.isEmpty || number1 == Btn.dot) {
         //number1 = "" | "0"
         value = "0.";
       }
       number1 += value;
-    } else if (number2.isEmpty || operand.isNotEmpty) {
+    }
+    // assign value to number2 variable
+    else if (number2.isEmpty || operand.isNotEmpty) {
       //number1 ="1.2"
       if (value == Btn.dot && number2.contains(Btn.dot)) return;
       if (value == Btn.dot && number2.isEmpty || number2 == Btn.dot) {
@@ -118,18 +167,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
-  // Color getBtnColor(value) {
-  //   return [Btn.del, Btn.clr].contains(value)
-  //       ? Colors.blueGrey
-  //       : [
-  //           Btn.per,
-  //           Btn.multiply,
-  //           Btn.add,
-  //           Btn.subtract,
-  //           Btn.divide,
-  //           Btn.calculate,
-  //         ].contains(value)
-  //           ? Colors.orange
-  //           : Colors.black87;
- // }
+  Color getBtnColor(value) {
+    return [Btn.del, Btn.clr].contains(value)
+        ? Colors.blueGrey
+        : [
+            Btn.per,
+            Btn.multiply,
+            Btn.add,
+            Btn.subtract,
+            Btn.divide,
+            Btn.calculate,
+          ].contains(value)
+            ? Colors.orange
+            : Colors.black87;
+  }
 }
